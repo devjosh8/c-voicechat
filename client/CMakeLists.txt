@@ -23,3 +23,16 @@ if(TARGET common)
     target_link_libraries(client PRIVATE common)
 endif()
 
+target_include_directories(client PRIVATE
+    ${CMAKE_SOURCE_DIR}/external/portaudio/include
+)
+target_link_libraries(client PRIVATE
+    ${CMAKE_SOURCE_DIR}/external/portaudio/lib/libportaudio.a
+    m
+    jack
+    pthread
+    rt
+    asound
+)
+
+
