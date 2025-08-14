@@ -141,11 +141,6 @@ int main() {
   signal(SIGINT, handle_sigint);
   printf("Client Hello!\n");
 
-  // TODO: Implement threading
-  //
-  // THREAD 1: Recording Microphone
-  // THREAD 2: Play Audio that was received from server (bind this socket to Port 4001)
-
   thrd_t recording_thread;
   thrd_t receiving_thread;
 
