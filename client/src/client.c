@@ -8,7 +8,6 @@
 #include <stdatomic.h>
 #include <string.h>
 #include <strings.h>
-#include <time.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -18,9 +17,8 @@
 #include <tinycthread/tinycthread.h>
 #include <rtc/rtc.h>
 
-// Client
-#define SERVER_PORT 4000
-#define CLIENT_PORT 4001
+
+#define SERVER_PORT 4008
 #define SERVER_ADDRESS "127.0.0.1"
 #define MAXMSG 512
 
@@ -38,9 +36,7 @@ void handle_sigint(int sig) {
   running = 0;
 }
 
-void on_track(int peer_connection, int trc_track, void *arg) {
-  printf("Daten vom Server empfangen!\n");
-}
+
 
 int make_offer_and_get_answer(const char* server_address, int port, char* offer, int offer_length,
     char* answer_buffer, int max_answer_length) {
@@ -56,13 +52,13 @@ int make_offer_and_get_answer(const char* server_address, int port, char* offer,
   serv_addr.sin_addr.s_addr = inet_addr(server_address);
   
   if(connect(sockfd, (struct sockaddr *)&serv_addr, sizeof(serv_addr)) < 0) {
-    printf("Verbindung konnte nicht hergestellt werden. %d\n", errno);
+    printf("Connection couldnt be established. %d\n", errno);
     return 0;
   }
 
   write(sockfd, offer, offer_length);
 
-  // Nachricht empfangen
+
   memset(answer_buffer, 0, max_answer_length);
 
   int read_offer_len = read(sockfd, answer_buffer, max_answer_length);
@@ -97,13 +93,10 @@ int main() {
   int pc = rtcCreatePeerConnection(&config);
   printf("Peer connection created!\n");
   
-  // DataChannel erstellen
-
   int datachannel = rtcCreateDataChannel(pc, "client-to-server");
   
   printf("Datachannel was successfully created!\n");
-  // Das hier ist der Client Peer. Er erstellt ein Offer und sendet dieses an den
-  // Server
+
 
   char offer[8192];
   int offer_size = rtcCreateOffer(pc, offer, 8192-1);
@@ -111,7 +104,6 @@ int main() {
   
   
 
-  // Offer in einer Datei für den Server abspeichern!
   char server_answer[MAX_ANSWER];
 
   int ret = make_offer_and_get_answer("127.0.0.1", SERVER_PORT, offer, offer_size, server_answer, MAX_ANSWER-1);
