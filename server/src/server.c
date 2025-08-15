@@ -1,5 +1,9 @@
+#include <asm-generic/errno-base.h>
+#include <asm-generic/errno.h>
 #include <errno.h>
+#include <fcntl.h>
 #include <netinet/in.h>
+#include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -9,11 +13,17 @@
 
 
 #define PORT 4000
-#define MAXMSG 512
+#define MAXMSG 4096
 
 // Server
 int datagram_socket;
 char message[MAXMSG];
+
+volatile sig_atomic_t running = 1;
+
+void handle_sigint(int sig) {
+    running = 0; 
+}
 
 void start_datagram_socket() {
   
@@ -38,6 +48,8 @@ void start_datagram_socket() {
     printf("Socket could not be bound.\n");
     exit(EXIT_FAILURE);
   }
+
+  fcntl(sockfd, F_SETFL, O_NONBLOCK);
   
   struct sockaddr client_addr;
   int clientlen = sizeof(client_addr);
@@ -47,28 +59,27 @@ void start_datagram_socket() {
   void* buffer = malloc(MAXMSG);
 
   printf("Waiting for incoming traffic...\n");
-  while(1) {
+  while(running) {
     memset(buffer, 0, MAXMSG);
 
     n = recvfrom(sockfd, buffer, MAXMSG, 0, (const struct sockaddr *)&client_addr, &clientlen);
     if(n < 0) {
-      printf("Error while receiving message.");
+      if(errno != EAGAIN && errno != EWOULDBLOCK) printf("Error while receiving message.");
+    } else {
+      sendto(sockfd,buffer, n, 0, (struct sockaddr *)&client_addr, clientlen);
     }
-    
-    char hbuf[NI_MAXHOST], sbuf[NI_MAXSERV];
-
-    if( getnameinfo(&client_addr, clientlen, hbuf, sizeof(hbuf), sbuf , sizeof(sbuf ), NI_NUMERICHOST | NI_NUMERICSERV) == 0) {
-      printf("Received Bytes: %d from %s, %s\n", n, hbuf, sbuf); 
-    }
-
   }
+
+  close(sockfd);
 }
 
 int main() {
+  signal(SIGINT, handle_sigint);
   printf("Starting Server...\n");
   start_datagram_socket();
-  // Start Server and wait for incoming connection
+  
 
+  printf("Exiting...\n");
   return 0;
 }
 
