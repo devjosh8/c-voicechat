@@ -85,6 +85,7 @@ int start_handshake_socket(void *arg) {
       close(newsockfd);
       continue;
     } else {
+      // Allocated memory will automatically be freed by the negotiation if no longer needed
       struct NegotiationArgs* negotiation_args = malloc(sizeof(struct NegotiationArgs));
       negotiation_args->offer = offer_buf;
       negotiation_args->offer_length = read_offer_len;
@@ -104,7 +105,7 @@ int start_handshake_socket(void *arg) {
 int main() {
   signal(SIGINT, handle_sigint);
   printf("Starting Server...\n");
-  rtcInitLogger(RTC_LOG_DEBUG, NULL);
+  rtcInitLogger(RTC_LOG_INFO, NULL);
   
   thrd_t handshake_thread;
 
