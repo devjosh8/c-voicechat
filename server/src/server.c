@@ -62,7 +62,7 @@ void start_datagram_socket() {
   while(running) {
     memset(buffer, 0, MAXMSG);
 
-    n = recvfrom(sockfd, buffer, MAXMSG, 0, (const struct sockaddr *)&client_addr, &clientlen);
+    n = recvfrom(sockfd, buffer, MAXMSG, 0, (struct sockaddr *)&client_addr, &clientlen);
     if(n < 0) {
       if(errno != EAGAIN && errno != EWOULDBLOCK) printf("Error while receiving message.");
     } else {
