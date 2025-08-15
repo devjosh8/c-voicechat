@@ -10,6 +10,7 @@ struct NegotiationArgs {
 };
 
 struct ClientContext {
+  int pc;
   int incoming_datachannel_id;
   int outgoing_datachannel_id;
   int clientfd;

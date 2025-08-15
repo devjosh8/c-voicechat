@@ -62,6 +62,7 @@ int negotiate_and_start_peer_connection(void *args) {
   client_context->clientfd = negotiation_args->clientfd;
   client_context->thread_id = negotiation_args->thread_id;
   client_context->running = 1;
+  client_context->pc = pc;
 
   rtcSetUserPointer(pc, client_context);
 
