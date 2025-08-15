@@ -16,3 +16,5 @@ target_include_directories(common PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
+# libdatachannel an common library koppeln
+target_link_libraries(common PUBLIC datachannel-static)
