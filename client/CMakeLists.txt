@@ -18,6 +18,10 @@ target_include_directories(client PRIVATE
     ${CMAKE_CURRENT_SOURCE_DIR}/include
 )
 
+target_link_libraries(client PRIVATE raylib m pthread dl rt)
+target_link_libraries(client PRIVATE /usr/local/lib/libopus.a)
+
+
 # Gemeinsame Bibliothek verlinken, falls vorhanden
 if(TARGET common)
     target_link_libraries(client PRIVATE common)
