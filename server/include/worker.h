@@ -14,6 +14,7 @@ struct ClientContext {
   int outgoing_datachannel_id;
   int clientfd;
   int thread_id;
+  int running;
 };
 
 /**

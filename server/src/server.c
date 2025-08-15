@@ -114,7 +114,8 @@ int main() {
   int res;
   thrd_join(handshake_thread, &res);
   
-  printf("Exiting.... Code %d\n", res);
+  printf("Exiting main loop.... Code %d\n", res);
+  sleep(5); // wait for connection threads to be terminated
 
   return 0;
 }
